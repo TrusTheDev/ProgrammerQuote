@@ -15,11 +15,14 @@ public class Quote {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    int Id;
+    int id;
 
+    @Column
     String quote;
 
-    int like;
+    @Column
+    int likes;
 
-    int dislike;
+    @Column
+    int dislikes;
 }

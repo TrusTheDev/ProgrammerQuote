@@ -1,8 +1,8 @@
 package com.trusty.QuotesAPI.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.trusty.QuotesAPI.model.Quote;
 import com.trusty.QuotesAPI.repo.QuoteRepo;
-import com.trusty.QuotesAPI.repo.QuotesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,10 +27,10 @@ public class QuoteController {
         }
     }
 
-    @GetMapping("/getQuote/{ID}")
-    public ResponseEntity<Optional> getQuoteById(@PathVariable int ID) {
-        if(repository.findById(ID).isPresent()) {
-            return new ResponseEntity<>(repository.findById(ID), HttpStatus.FOUND);
+    @GetMapping("/getQuote/{Id}")
+    public ResponseEntity<Optional> getQuoteById(@PathVariable int Id) {
+        if(repository.findById(Id).isPresent()) {
+            return new ResponseEntity<>(repository.findById(Id), HttpStatus.FOUND);
         }
         else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -47,10 +47,11 @@ public class QuoteController {
         }
     }
 
-    @DeleteMapping("/deleteMappingById/{ID}")
-    public ResponseEntity<Optional> deleteQuoteById(@PathVariable int ID) {
-        if(repository.findById(ID).isPresent()) {
-            return new ResponseEntity<>(repository.deleteById(ID), HttpStatus.OK);
+    @DeleteMapping("/deleteMappingById/{Id}")
+    public ResponseEntity<Optional> deleteQuoteById(@PathVariable int Id) {
+        if(repository.findById(Id).isPresent()) {
+            repository.deleteById(Id);
+            return new ResponseEntity<>(HttpStatus.OK);
         }
         else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -65,5 +66,55 @@ public class QuoteController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
+    @PostMapping("/addLike/{Id}")
+    public ResponseEntity<Quote> addLike(@PathVariable int Id) {
+        if(repository.findById(Id).isPresent()) {
+            ObjectMapper objectMapper = new ObjectMapper();
+            Quote quote = objectMapper.convertValue(repository.findById(Id).get(), Quote.class);
+            quote.setLikes(quote.getLikes() + 1);
+            return new ResponseEntity<>(repository.save(quote), HttpStatus.OK);
+        }
+        else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 
+    @PostMapping("/removeLike/{Id}")
+    public ResponseEntity<Quote> removeLike(@PathVariable int Id) {
+        if(repository.findById(Id).isPresent()) {
+            ObjectMapper objectMapper = new ObjectMapper();
+            Quote quote = objectMapper.convertValue(repository.findById(Id).get(), Quote.class);
+            quote.setLikes(quote.getLikes() - 1);
+            return new ResponseEntity<>(repository.save(quote), HttpStatus.OK);
+        }
+        else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PostMapping("/addDislike/{Id}")
+    public ResponseEntity<Quote> addDislike(@PathVariable int Id) {
+        if(repository.findById(Id).isPresent()) {
+            ObjectMapper objectMapper = new ObjectMapper();
+            Quote quote = objectMapper.convertValue(repository.findById(Id).get(), Quote.class);
+            quote.setLikes(quote.getDislikes() + 1);
+            return new ResponseEntity<>(repository.save(quote), HttpStatus.OK);
+        }
+        else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PostMapping("/removeDislike/{Id}")
+    public ResponseEntity<Quote> removeDislike(@PathVariable int Id) {
+        if(repository.findById(Id).isPresent()) {
+            ObjectMapper objectMapper = new ObjectMapper();
+            Quote quote = objectMapper.convertValue(repository.findById(Id).get(), Quote.class);
+            quote.setLikes(quote.getDislikes() - 1);
+            return new ResponseEntity<>(repository.save(quote), HttpStatus.OK);
+        }
+        else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 }
