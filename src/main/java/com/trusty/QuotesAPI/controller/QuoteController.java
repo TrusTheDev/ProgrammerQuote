@@ -37,17 +37,16 @@ public class QuoteController {
         }
     }
 
-    @PostMapping("/addQuote")
+    @PostMapping("/addUpdateQuote")
     public ResponseEntity<Quote> saveQuote(@RequestBody Quote quote) {
-        if(repository.findById(quote.getId()).isPresent()) {
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
-        }
-        else {
-            return new ResponseEntity<>(repository.save(quote),HttpStatus.OK);
+        try{
+            return new ResponseEntity<>(repository.save(quote), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @DeleteMapping("/deleteMappingById/{Id}")
+    @DeleteMapping("/deleteQuoteById/{Id}")
     public ResponseEntity<Optional> deleteQuoteById(@PathVariable int Id) {
         if(repository.findById(Id).isPresent()) {
             repository.deleteById(Id);
@@ -58,15 +57,7 @@ public class QuoteController {
         }
     }
 
-    @PutMapping("/updateQuoteById/{Id}")
-    public ResponseEntity<Quote> updateQuote(@PathVariable int Id, @RequestBody Quote quote) {
-        if(repository.findById(Id).isPresent()) {
-            return new ResponseEntity<>(repository.save(quote), HttpStatus.OK);
-        }
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
-
-    @PostMapping("/addLike/{Id}")
+    @PutMapping("/addLike/{Id}")
     public ResponseEntity<Quote> addLike(@PathVariable int Id) {
         if(repository.findById(Id).isPresent()) {
             ObjectMapper objectMapper = new ObjectMapper();
@@ -79,7 +70,7 @@ public class QuoteController {
         }
     }
 
-    @PostMapping("/removeLike/{Id}")
+    @PutMapping("/removeLike/{Id}")
     public ResponseEntity<Quote> removeLike(@PathVariable int Id) {
         if(repository.findById(Id).isPresent()) {
             ObjectMapper objectMapper = new ObjectMapper();
@@ -92,12 +83,12 @@ public class QuoteController {
         }
     }
 
-    @PostMapping("/addDislike/{Id}")
+    @PutMapping("/addDislike/{Id}")
     public ResponseEntity<Quote> addDislike(@PathVariable int Id) {
         if(repository.findById(Id).isPresent()) {
             ObjectMapper objectMapper = new ObjectMapper();
             Quote quote = objectMapper.convertValue(repository.findById(Id).get(), Quote.class);
-            quote.setLikes(quote.getDislikes() + 1);
+            quote.setDislikes(quote.getDislikes() + 1);
             return new ResponseEntity<>(repository.save(quote), HttpStatus.OK);
         }
         else {
@@ -105,12 +96,12 @@ public class QuoteController {
         }
     }
 
-    @PostMapping("/removeDislike/{Id}")
+    @PutMapping("/removeDislike/{Id}")
     public ResponseEntity<Quote> removeDislike(@PathVariable int Id) {
         if(repository.findById(Id).isPresent()) {
             ObjectMapper objectMapper = new ObjectMapper();
             Quote quote = objectMapper.convertValue(repository.findById(Id).get(), Quote.class);
-            quote.setLikes(quote.getDislikes() - 1);
+            quote.setDislikes(quote.getDislikes() - 1);
             return new ResponseEntity<>(repository.save(quote), HttpStatus.OK);
         }
         else {
