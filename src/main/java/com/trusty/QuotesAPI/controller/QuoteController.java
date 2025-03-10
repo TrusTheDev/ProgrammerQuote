@@ -37,12 +37,23 @@ public class QuoteController {
         }
     }
 
-    @PostMapping("/addUpdateQuote")
+    @PostMapping("/postQuote")
     public ResponseEntity<Quote> saveQuote(@RequestBody Quote quote) {
-        try{
+        if(repository.findById(quote.getId()).isPresent()) {
+            return new ResponseEntity<>(null, HttpStatus.CONFLICT);
+        }
+        else {
+            return new ResponseEntity<>(repository.save(quote), HttpStatus.CREATED);
+        }
+    }
+
+    @PutMapping("/putQuote")
+    public ResponseEntity<Quote> updateQuote(@RequestBody Quote quote) {
+        if (repository.findById(quote.getId()).isPresent()) {
             return new ResponseEntity<>(repository.save(quote), HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
