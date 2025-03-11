@@ -14,7 +14,7 @@ import lombok.ToString;
 public class Quote {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
 
     @Column
