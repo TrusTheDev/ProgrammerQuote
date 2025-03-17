@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
+//Acordate de cambiarlo al url donde tenes montado la página web (protocolo CORS)
+@CrossOrigin(origins = "http://localhost:4200/")
 public class QuoteController {
 
     @Autowired
@@ -23,14 +25,14 @@ public class QuoteController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         else {
-            return new ResponseEntity<>(repository.findAll(), HttpStatus.FOUND);
+            return new ResponseEntity<>(repository.findAll(), HttpStatus.OK);
         }
     }
 
     @GetMapping("/getQuote/{Id}")
     public ResponseEntity<Optional> getQuoteById(@PathVariable int Id) {
         if(repository.findById(Id).isPresent()) {
-            return new ResponseEntity<>(repository.findById(Id), HttpStatus.FOUND);
+            return new ResponseEntity<>(repository.findById(Id), HttpStatus.OK);
         }
         else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -50,7 +52,7 @@ public class QuoteController {
     @PutMapping("/putQuote")
     public ResponseEntity<Quote> updateQuote(@RequestBody Quote quote) {
         if (repository.findById(quote.getId()).isPresent()) {
-            return new ResponseEntity<>(repository.save(quote), HttpStatus.OK);
+            return new ResponseEntity<>(repository.save(quote), HttpStatus.ACCEPTED);
         }
         else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
