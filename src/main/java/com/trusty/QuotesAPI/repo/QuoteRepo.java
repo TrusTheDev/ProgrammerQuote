@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface QuoteRepo extends JpaRepository<Quote, Integer> {
+//Devuelve el primer quiote por el orden descendente de id
+    Quote findFirstByOrderByIdDesc();
 }
